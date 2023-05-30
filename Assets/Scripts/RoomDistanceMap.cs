@@ -45,9 +45,6 @@ namespace DungeonAlchemist.TerrainGeneration
 		private Point[,] points;
 		private HeapPriorityQueue<Point> pendingPoints;
 
-		private static int idCounter = 0;
-		private int id = ++idCounter;
-
 
 		public RoomDistanceMap(IMap map, float maxDistance)
 		{
