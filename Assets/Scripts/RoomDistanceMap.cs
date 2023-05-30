@@ -75,9 +75,9 @@ namespace DungeonAlchemist.TerrainGeneration
 			{
 				for (int y = 0; y < size.y; ++y)
 				{
-					Vector2i pixel = new Vector2i(x, y);
-					Point p = new Point(subdividedMap, pixel);
-					points[pixel.x, pixel.y] = p;
+					Vector2i piece = new Vector2i(x, y);
+					Point p = new Point(subdividedMap, piece);
+					points[piece.x, piece.y] = p;
 				}
 			}
 		}
@@ -198,9 +198,9 @@ namespace DungeonAlchemist.TerrainGeneration
 			Profiler.BeginSample("Insert Tile");
 			tilesInRoom.Add(tile);
 
-			foreach (Vector2i pixel in subdividedMap.GetSubdividedPiecesOnTile(tile))
+			foreach (Vector2i piece in subdividedMap.GetSubdividedPiecesOnTile(tile))
 			{
-				Point p = points[pixel.x, pixel.y];
+				Point p = points[piece.x, piece.y];
 				p.hasRoot = true;
 				p.outOfRange = false;
 				p.root = p.point;
@@ -218,18 +218,18 @@ namespace DungeonAlchemist.TerrainGeneration
 			Profiler.BeginSample("Delete Tile");
 			tilesInRoom.Remove(tile);
 
-			foreach (Vector2i pixel in subdividedMap.GetSubdividedPiecesOnTile(tile))
+			foreach (Vector2i piece in subdividedMap.GetSubdividedPiecesOnTile(tile))
 			{
-				Point p = points[pixel.x, pixel.y];
+				Point p = points[piece.x, piece.y];
 				if (!p.hasRoot) continue;
 
-				// see if the pixel has any adjacent rooms
-				bool isStillTouchingRoom = subdividedMap.GetTilesTouchingPiece(pixel).Any(touchingTile => tilesInRoom.Contains(touchingTile));
+				// see if the piece has any adjacent rooms
+				bool isStillTouchingRoom = subdividedMap.GetTilesTouchingPiece(piece).Any(touchingTile => tilesInRoom.Contains(touchingTile));
 				if (isStillTouchingRoom) continue;
 
 				p.hasRoot = false;
 				p.outOfRange = false;
-				removedRoots.Add(pixel);
+				removedRoots.Add(piece);
 			}
 			Profiler.EndSample();
 		}
@@ -346,11 +346,11 @@ namespace DungeonAlchemist.TerrainGeneration
 
 		public float GetDistance(Vector2 mapPos)
 		{
-			Vector2 pixel = subdividedMap.MapPosToPiece(mapPos);
-			Vector2i p00 = Vector2i.Floor(pixel);
+			Vector2 piece = subdividedMap.MapPosToPiece(mapPos);
+			Vector2i p00 = Vector2i.Floor(piece);
 			Vector2i p11 = Vector2i.Min(p00 + 1, size - 1);
 
-			// get the average of all points around this pixel
+			// get the average of all points around this piece
 			float distance = (points[p00.x, p00.y].distance + points[p00.x, p11.y].distance + points[p11.x, p00.y].distance + points[p11.x, p11.y].distance) / 4;
 			return distance;
 		}
