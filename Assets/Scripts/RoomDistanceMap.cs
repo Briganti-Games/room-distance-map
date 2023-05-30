@@ -8,6 +8,19 @@ using UnityEngine;
 
 namespace DungeonAlchemist.TerrainGeneration
 {
+	/**
+	 * RoomDistanceMap is a helper class used to keep track of how far locations on the map are from rooms on the map.
+	 * This is used in many different areas, but one example would be to keep grass on the terrain from spawning
+	 * inside a room or near the edges of a room (which would make it overlap with the walls).
+	 * 
+	 * Each room has a set of tiles (1x1 pieces of the map) that lie in that room.
+	 * 
+	 * The main issue with this code is that it is too slow, especially on larger maps, or when adding/removing
+	 * large rooms.
+	 * 
+	 * 
+	 * 
+	 **/
 	public class RoomDistanceMap
 	{
 		private class Point : PriorityQueueNode
@@ -340,16 +353,6 @@ namespace DungeonAlchemist.TerrainGeneration
 			// get the average of all points around this pixel
 			float distance = (points[p00.x, p00.y].distance + points[p00.x, p11.y].distance + points[p11.x, p00.y].distance + points[p11.x, p11.y].distance) / 4;
 			return distance;
-		}
-
-		public float GetDistance(Vector2i pixel)
-		{
-			return points[pixel.x, pixel.y].distance;
-		}
-
-		public float GetDistance(int x, int y)
-		{
-			return points[x, y].distance;
 		}
 
 		public void DrawGizmos()
