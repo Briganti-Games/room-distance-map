@@ -17,9 +17,6 @@ namespace DungeonAlchemist.TerrainGeneration
 	 * 
 	 * The main issue with this code is that it is too slow, especially on larger maps, or when adding/removing
 	 * large rooms.
-	 * 
-	 * 
-	 * 
 	 **/
 	public class RoomDistanceMap
 	{
