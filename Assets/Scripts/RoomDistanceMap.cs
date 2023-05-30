@@ -123,7 +123,7 @@ namespace DungeonAlchemist.TerrainGeneration
 
 			UpdateTiles(record);
 
-			// first remove all times associated with this root - we need to re-explore them!
+			// first remove all tiles associated with this root - we need to re-explore them!
 			RemoveRoots(removedRoots);
 
 			// now update the distance map
