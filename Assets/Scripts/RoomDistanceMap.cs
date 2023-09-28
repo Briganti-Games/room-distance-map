@@ -58,6 +58,7 @@ namespace DungeonAlchemist.TerrainGeneration
 
 		public RoomDistanceMap(IMap map, float maxDistance)
 		{
+			// divide each tile on the original map into 8x8 pieces so that we have a finer grid to calculate the distance on
 			this.subdividedMap = map.Subdivide(8);
 			this.maxDistance = maxDistance;
 			this.size = subdividedMap.size;
