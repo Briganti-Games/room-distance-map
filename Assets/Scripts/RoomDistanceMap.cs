@@ -17,6 +17,9 @@ namespace DungeonAlchemist.TerrainGeneration
 	 * 
 	 * The main issue with this code is that it is too slow, especially on larger maps, or when adding/removing
 	 * large rooms.
+	 * 
+	 * This class exposes exactly one method to its users: GetDistance(mapPos), which return the (estimated) distance
+	 * of a location on the map from the room closest to it.
 	 **/
 	public class RoomDistanceMap
 	{
