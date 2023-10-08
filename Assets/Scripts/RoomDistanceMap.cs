@@ -33,7 +33,7 @@ namespace DungeonAlchemist.TerrainGeneration
 			public bool hasRoot = false;
 			public bool outOfRange = false;
 			public Vector2i root;
-			public float distance => hasRoot ? Vector2.Distance(subdividedMap.PieceToMapPos(point), subdividedMap.PieceToMapPos(root)) : float.MaxValue;
+			public float distance => hasRoot ? Vector2.Distance(subdividedMap.SubdividedGridPointToMapPos(point), subdividedMap.SubdividedGridPointToMapPos(root)) : float.MaxValue;
 
 			public Point(ISubdividedTileMap subdividedMap, Vector2i point)
 			{
@@ -199,7 +199,7 @@ namespace DungeonAlchemist.TerrainGeneration
 			Profiler.BeginSample("Insert Tile");
 			tilesInRoom.Add(tile);
 
-			foreach (Vector2i piece in subdividedMap.GetSubdividedPiecesOnTile(tile))
+			foreach (Vector2i piece in subdividedMap.GetSubdividedGridPointsOnTile(tile))
 			{
 				Point p = points[piece.x, piece.y];
 				p.hasRoot = true;
@@ -219,13 +219,13 @@ namespace DungeonAlchemist.TerrainGeneration
 			Profiler.BeginSample("Delete Tile");
 			tilesInRoom.Remove(tile);
 
-			foreach (Vector2i piece in subdividedMap.GetSubdividedPiecesOnTile(tile))
+			foreach (Vector2i piece in subdividedMap.GetSubdividedGridPointsOnTile(tile))
 			{
 				Point p = points[piece.x, piece.y];
 				if (!p.hasRoot) continue;
 
 				// see if the piece has any adjacent rooms
-				bool isStillTouchingRoom = subdividedMap.GetTilesTouchingPiece(piece).Any(touchingTile => tilesInRoom.Contains(touchingTile));
+				bool isStillTouchingRoom = subdividedMap.GetTilesTouchingSubdividedGridPoint(piece).Any(touchingTile => tilesInRoom.Contains(touchingTile));
 				if (isStillTouchingRoom) continue;
 
 				p.hasRoot = false;
@@ -284,7 +284,7 @@ namespace DungeonAlchemist.TerrainGeneration
 				{
 					if (dx == dy) continue;
 					Vector2i neighbour = p.point + new Vector2i(dx, dy);
-					if (!subdividedMap.IsValidPiece(neighbour)) continue;
+					if (!subdividedMap.IsValidSubdividedGridPoint(neighbour)) continue;
 					if (!points[neighbour.x, neighbour.y].hasRoot) return true;
 				}
 			}
@@ -317,11 +317,11 @@ namespace DungeonAlchemist.TerrainGeneration
 
 		private void ExploreNeighbour(Point parent, Vector2i position)
 		{
-			if (!subdividedMap.IsValidPiece(position)) return;
+			if (!subdividedMap.IsValidSubdividedGridPoint(position)) return;
 
 			// calculate the distance of the neighbour from the root, and if it changes, we add it to the queue
 			Point candidate = points[position.x, position.y];
-			float newDistance = Vector2.Distance(subdividedMap.PieceToMapPos(position), subdividedMap.PieceToMapPos(parent.root));
+			float newDistance = Vector2.Distance(subdividedMap.SubdividedGridPointToMapPos(position), subdividedMap.SubdividedGridPointToMapPos(parent.root));
 			if (newDistance < candidate.distance)
 			{
 				candidate.root = parent.root;
@@ -347,7 +347,7 @@ namespace DungeonAlchemist.TerrainGeneration
 
 		public float GetDistance(Vector2 mapPos)
 		{
-			Vector2 piece = subdividedMap.MapPosToPiece(mapPos);
+			Vector2 piece = subdividedMap.MapPosToSubdividedGridPoint(mapPos);
 			Vector2i p00 = Vector2i.Floor(piece);
 			Vector2i p11 = Vector2i.Min(p00 + 1, size - 1);
 
@@ -365,8 +365,8 @@ namespace DungeonAlchemist.TerrainGeneration
 					Vector2i p = new Vector2i(x, y);
 					float t = Mathf.InverseLerp(0, 5, GetDistance(p));
 					float height = t * 1.0f;
-					Vector2 bottomLeft = subdividedMap.PieceToMapPos(p);
-					Vector2 topRight = subdividedMap.PieceToMapPos(p + 1);
+					Vector2 bottomLeft = subdividedMap.SubdividedGridPointToMapPos(p);
+					Vector2 topRight = subdividedMap.SubdividedGridPointToMapPos(p + 1);
 					Vector2 center = (bottomLeft + topRight) * 0.5f;
 					Gizmos.color = Color.Lerp(Color.red, Color.green, t);
 					Gizmos.DrawCube(new Vector3(center.x, -1 + height * 0.5f, center.y), new Vector3(topRight.x - bottomLeft.x, height, topRight.y - bottomLeft.y));
